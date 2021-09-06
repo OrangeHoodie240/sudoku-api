@@ -2,10 +2,12 @@ const express = require('express');
 const { Board } = require('../sudoku/Board');
 const Analyzer = require('../sudoku/Analyzer');
 const ExpressError = require('../ExpressError');
+const config = require('../config');
+const getPuzzle = require('../helpers/getPuzzle');
 const router = new express.Router();
 
 
-router.get('/analysis', (req, res, next) => {
+router.get('/analysis', async (req, res, next) => {
     let puzzle = req.query.puzzle;
     if (!puzzle) {
         return next(new ExpressError('Bad request', 400));
@@ -25,6 +27,15 @@ router.get('/analysis', (req, res, next) => {
         console.error(error);
         return next(new ExpressError('something went wrong', 500));
     }
+});
+
+
+router.get('/', async (req, res, next)=>{
+   let level = req.query.level; 
+   if(!config.levels.includes('level-' + level)){
+       return next(new ExpressError('missing level parameter',400));
+   }
+   return res.json({data: getPuzzle(level)});
 });
 
 module.exports = router;
