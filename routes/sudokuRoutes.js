@@ -6,6 +6,7 @@ const router = new express.Router();
 
 
 router.get('/analysis', (req, res, next) => {
+    console.log('here at least');
     let puzzle = req.query.puzzle;
     if (!puzzle) {
         return next(new ExpressError('Bad request', 400));
