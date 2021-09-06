@@ -10,7 +10,6 @@ app.use(express.urlencoded({extended: true}));
 
 
 app.use('/sudoku', sudokuRoutes);
-console.log('here at least');
 
 app.use((error, req, res, next)=>{
     const message = error.message;
