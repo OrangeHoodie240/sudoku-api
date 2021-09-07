@@ -1,6 +1,8 @@
 const express = require('express'); 
 const sudokuRoutes = require('./routes/sudokuRoutes');
 const cors = require('cors');
+const path = require('path');
+
 
 const app = express(); 
 
@@ -8,6 +10,11 @@ app.use(cors({origin: '*'}));
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true})); 
+app.use(express.static(path.join(__dirname, 'build')));
+
+app.get('/play-demo', (req, res, next)=>{
+    return res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 
 
 app.use('/sudoku', sudokuRoutes);
