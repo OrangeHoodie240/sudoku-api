@@ -3,7 +3,8 @@
 
 const config = {
 
-    levels: ['level-one', 'level-two', 'level-three', 'level-four', 'level-five']
+    levels: ['level-one', 'level-two', 'level-three', 'level-four', 'level-five'], 
+    secretKey: 'dksljfdasfj;adsjfiq0e9321!',
 
 }; 
 

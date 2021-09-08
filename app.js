@@ -1,5 +1,7 @@
 const express = require('express'); 
 const sudokuRoutes = require('./routes/sudokuRoutes');
+const authenticationRoutes = require('./routes/authenticationRoutes');
+const authenticationMiddleware = require('./middleware/authenticationMiddleware');
 const cors = require('cors');
 const path = require('path');
 
@@ -16,8 +18,15 @@ app.get('/play-demo', (req, res, next)=>{
     return res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
-
 app.use('/sudoku', sudokuRoutes);
+
+
+// this will search for a token attach the payload if it exists
+app.use(authenticationMiddleware.searchForToken);
+
+app.use('/authenticate', authenticationRoutes);
+
+
 
 app.use((error, req, res, next)=>{
     const message = error.message;
