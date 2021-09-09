@@ -1,7 +1,8 @@
 const {Client} = require('pg'); 
 
 
-const DATABASE_URI = process.env.DATABASE_URI || 'postgresql:///sudoku';
+let DATABASE_URI = process.env.DATABASE_URI || 'postgresql:///sudoku';
+if(process.NODE_ENV==='test') DATABASE_URI = 'postgresql:///sudoku';
 
 const dbConnection = new Client({connectionString: DATABASE_URI});
 dbConnection.connect(); 

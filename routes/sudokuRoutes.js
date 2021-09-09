@@ -35,7 +35,8 @@ router.get('/', async (req, res, next)=>{
    if(!config.levels.includes('level-' + level)){
        return next(new ExpressError('missing level parameter',400));
    }
-   return res.json({data: getPuzzle(level)});
+   const data = getPuzzle(level);
+   return res.json({data});
 });
 
 module.exports = router;

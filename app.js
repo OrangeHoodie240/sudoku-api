@@ -1,6 +1,7 @@
 const express = require('express'); 
 const sudokuRoutes = require('./routes/sudokuRoutes');
 const authenticationRoutes = require('./routes/authenticationRoutes');
+const savedPUzzleRoutes = require('./routes/savedPuzzlesRoutes');
 const authenticationMiddleware = require('./middleware/authenticationMiddleware');
 const cors = require('cors');
 const path = require('path');
@@ -25,7 +26,7 @@ app.use('/sudoku', sudokuRoutes);
 app.use(authenticationMiddleware.searchForToken);
 
 app.use('/authenticate', authenticationRoutes);
-
+app.use('/saved-puzzles', savedPUzzleRoutes);
 
 
 app.use((error, req, res, next)=>{

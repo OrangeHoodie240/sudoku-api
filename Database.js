@@ -29,20 +29,21 @@ class Database {
      */
     static async createUser(email, password) {
         if (!await Database.getUserByEmail(email)) {
-            password = await bcrypt.hash(password, 16);
+            password = await bcrypt.hash(password, 14);
             let query = 'INSERT INTO sudoku_users(email, password) VALUES($1, $2) RETURNING email';
             try {
                 let results = await dbConnection.query(query, [email, password]);
-                if(results.rows.length > 0){
-                    return true; 
+                if (results.rows.length > 0) {
+                    return true;
                 }
             }
             catch (err) {
+                console.error(err);
                 throw new ExpressError('Error attempting to create user', 500);
             }
         }
         else {
-            return false; 
+            return false;
         }
     }
 
@@ -68,8 +69,8 @@ class Database {
                     return false;
                 }
             }
-            catch (error){
-                throw new ExpressError('Server error', 500);               
+            catch (error) {
+                throw new ExpressError('Server error', 500);
             }
         }
         else {
@@ -85,22 +86,23 @@ class Database {
      * @param {String} level 
      * @returns 
      */
-    static async userHasPuzzleSaved(id, puzzleId, level){
-        try{
+    static async userHasPuzzleSaved(id, puzzleId, level) {
+        try {
             let query = 'SELECT puzzle_id FROM sudoku_incomplete_puzzles WHERE user_id=$1 AND puzzle_id=$2 AND level=$3';
-            let results = await dbConnection.query(query,[id, puzzleId, level]); 
-            if(results.rows.length > 0){
-                return true; 
+            let results = await dbConnection.query(query, [id, puzzleId, level]);
+            if (results.rows.length > 0) {
+                return true;
             }
-            else{
+            else {
                 return false;
             }
         }
-        catch(error){
+        catch (error) {
+            console.error(error);
             throw new ExpressError("Server Error", 500);
         }
     }
-    
+
 
 
     /**
@@ -111,24 +113,25 @@ class Database {
      * @param {String} puzzleId
      * @returns {Boolean} 
      */
-    static async savePuzzle(id, puzzle, level, puzzleId){
-        try{
+    static async savePuzzle(id, puzzle, level, puzzleId) {
+        try {
             const query = `INSERT INTO sudoku_incomplete_puzzles(user_id, level, puzzle, puzzle_id)
                             VALUES($1, $2, $3, $4)
                             RETURNING user_id`;
             let results = await dbConnection.query(query, [id, level, puzzle, puzzleId]);
-            results = results.row[0];
-            if(results) {
+            results = results.rows[0];
+            if (results) {
                 return true;
             }
-            else{
+            else {
                 return false;
-            } 
-        
+            }
+
         }
-        catch(error){
+        catch (error) {
+            console.error(error);
             throw new Error("Server error", 500);
-        }        
+        }
 
     }
 
@@ -140,13 +143,19 @@ class Database {
      * @param {String} puzzle 
      * @returns 
      */
-    static async updatePuzzle(user_id, level, puzzleId, puzzle){
-        let query = `UPDATE sudoku_incomplete_puzzles SET puzzle = $1 WHERE user_id=$2 AND puzzle_id=$3 AND level=$4 RETURNING user_id`; 
-        try{
+    static async updatePuzzle(user_id, level, puzzleId, puzzle) {
+        let query = `UPDATE sudoku_incomplete_puzzles SET puzzle=$1 WHERE user_id=$2 AND puzzle_id=$3 AND level=$4 RETURNING user_id`;
+        try {
             let results = await dbConnection.query(query, [puzzle, user_id, puzzleId, level]);
-            if(results.rows.length > 0) return true;
+            if (results.rows.length > 0) {
+                return true;
+            }
+            else {
+                return false;
+            }
         }
-        catch(error){
+        catch (error) {
+            console.error(error);
             throw new ExpressError('Server error', 500);
         }
     }
@@ -158,19 +167,32 @@ class Database {
      * @param {String} level 
      * @returns {Boolean}
      */
-    static deletePuzzle(user_id, puzzle_id, level){
-        let query = `DELETE FROM sudoku_incomplete_puzzles WHERE user_id=$1 AND puzzle_id=$2 AND level=$3 RETURNING user_id`; 
-        try{
-            let results = await dbConnection.query(query, [puzzle, user_id, puzzle_id, level]);
-            if(results.rows.length > 0) {
+    static async deletePuzzle(user_id, puzzle_id, level) {
+        let query = `DELETE FROM sudoku_incomplete_puzzles WHERE user_id=$1 AND puzzle_id=$2 AND level=$3 RETURNING user_id`;
+        try {
+            let results = await dbConnection.query(query, [user_id, puzzle_id, level]);
+            if (results.rows.length > 0) {
                 return true;
             }
         }
+        catch (error) {
+            console.error(error);
+            throw new ExpressError('Server error', 500);
+        }
+    }
+
+    static async getSavedPuzzles(id){
+        let query = 'SELECT puzzle, puzzle_id, level FROM sudoku_incomplete_puzzles WHERE user_id=$1'; 
+        try{
+            let puzzles = await dbConnection.query(query, [id]); 
+            return puzzles.rows; 
+        }
         catch(error){
+            console.error(error); 
             throw new ExpressError('Server error', 500);
         }
     }
 
 }
 
-module.exports = Database; 
+module.exports = Database;

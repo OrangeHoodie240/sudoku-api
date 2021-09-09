@@ -12,18 +12,18 @@ const config = require('../config');
  * @param {*} next 
  * @returns 
  */
-function searchForToken(req, res, next){
+function searchForToken(req, res, next) {
     let token = req.query.token || req.body.token;
-    if(token){
-        try{
+    if (token) {
+        try {
             token = jsonwebtoken.verify(token, config.secretKey);
             req.query.token = token;
         }
-        catch(err){
+        catch (err) {
             return next(new ExpressError("Invalid Token", 400));
         }
     }
-    return next(); 
+    return next();
 }
 
 
@@ -34,8 +34,8 @@ function searchForToken(req, res, next){
  * @param {*} next 
  * @returns 
  */
-function authenticate(req, res, next){
-    if(!req.query.token){
+function authenticate(req, res, next) {
+    if (!req.query.token) {
         return next(new ExpressError('Authentication required', 400));
     }
     return next();
@@ -49,13 +49,13 @@ function authenticate(req, res, next){
  * @param {*} next 
  * @returns 
  */
-function requireExactUser(req, res, next){
-    let userId = req.token.id;
-    let queryStringId = req.query.id;  
-    if(userId !== queryStringId){
+function requireExactUser(req, res, next) {
+    let userId = req.query.token.id;
+    let queryOrBodyId = req.query.id || req.body.id || req.params.id;
+    if (userId != queryOrBodyId) {
         return next(new ExpressError('Error! Authentication Required', 400));
     }
     return next();
 }
 
-module.exports = {searchForToken, authenticate, requireExactUser};
+module.exports = { searchForToken, authenticate, requireExactUser };

@@ -7,12 +7,12 @@ const config = require('../config');
 
 
 router.post('/login', async (req, res, next)=>{
-    const {email, password} = req.token; 
+    const {email, password} = req.body;
     if(!email || !password) return next(new ExpressError('Missing Parameters', 404));
     try{
         let user = await Database.authenticate(email, password); 
         if(user){
-            let token = jsonwebtoken.sign({user: user.id, email}, config.secretKey);
+            let token = jsonwebtoken.sign({id: user.id, email}, config.secretKey);
             return res.json({token, success: true});
         }
         else{
@@ -25,7 +25,7 @@ router.post('/login', async (req, res, next)=>{
 });
 
 router.post('/create-user', async (req, res, next)=>{
-    const {email, password} = req.body.token; 
+    const {email, password} = req.body; 
     if(!email || !password) return next(new ExpressError('Missing Parameters', 404));
     try{
         let user = await Database.createUser(email, password);
