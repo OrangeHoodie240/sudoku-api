@@ -65,6 +65,7 @@ router.delete('/', authenticate, requireExactUser, async (req, res, next) => {
 
 
 router.patch('/', authenticate, requireExactUser, async (req, res, next) => {
+    console.log('here');
     const id = req.query.token.id;
     const {puzzleId, level, puzzle } = req.body;
     if (!id || !puzzleId || !level || !puzzle) {
