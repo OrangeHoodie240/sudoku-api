@@ -9,7 +9,11 @@ const path = require('path');
 
 const app = express(); 
 
-app.use(cors());
+app.use(cors({
+    origin: '*', 
+    methods: 'GET,PUT,PATCH,OPTIONS,POST,DELETE', 
+    preflightContinue: true, 
+}));
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true})); 
