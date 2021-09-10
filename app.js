@@ -11,6 +11,7 @@ const app = express();
 
 app.use(cors({
     origin: ['https://steven-sudoku-api.herokuapp.com/','*'], 
+    preflightContinue: true,
     credentials: true
 }));
 
