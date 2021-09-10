@@ -13,7 +13,7 @@ router.post('/login', async (req, res, next)=>{
         let user = await Database.authenticate(email, password); 
         if(user){
             let token = jsonwebtoken.sign({id: user.id, email}, config.secretKey);
-            return res.json({token, success: true});
+            return res.json({token, id: user.id, success: true});
         }
         else{
             res.json({success: false})
