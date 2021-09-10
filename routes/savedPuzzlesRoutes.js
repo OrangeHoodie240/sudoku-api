@@ -2,9 +2,8 @@ const express = require('express');
 const ExpressError = require('../ExpressError');
 const router = new express.Router();
 const Database = require('../Database');
-const { Board } = require('../sudoku/Board');
 const { authenticate, requireExactUser } = require('../middleware/authenticationMiddleware');
-
+const convert2DArrayToFlatString = require('../helpers/convert2DArrayToFlatString');
 
 router.get('/:id',authenticate, requireExactUser, async (req, res, next)=>{
     const id = req.params.id; 
@@ -27,6 +26,7 @@ router.post('/', authenticate, requireExactUser, async (req, res, next) => {
         return next(new ExpressError('Missing parameters', 400));
     }
 
+    puzzle = convert2DArrayToFlatString(puzzle);
     try {
         let success = await Database.savePuzzle(id, puzzle, level, puzzleId);
         if (success) {
