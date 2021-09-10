@@ -32,10 +32,6 @@ app.use(authenticationMiddleware.searchForToken);
 app.use('/authenticate', authenticationRoutes);
 
 
-app.use((req, res, next)=>{
-    console.log(req.headers); 
-    return next(); 
-});
 app.use('/saved-puzzles', savedPUzzleRoutes);
 
 

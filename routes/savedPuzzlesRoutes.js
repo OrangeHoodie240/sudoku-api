@@ -5,6 +5,29 @@ const Database = require('../Database');
 const { authenticate, requireExactUser } = require('../middleware/authenticationMiddleware');
 const convert2DArrayToFlatString = require('../helpers/convert2DArrayToFlatString');
 
+
+
+router.patch('/', authenticate, requireExactUser, async (req, res, next) => {
+    const id = req.query.token.id;
+    const {puzzleId, level, puzzle } = req.body;
+    if (!id || !puzzleId || !level || !puzzle) {
+        return next(new ExpressError('Missing parameters', 400));
+    }
+    try {
+        let success = await Database.updatePuzzle(id, level, puzzleId, puzzle);
+        if (success) {
+            return res.json({ success: true });
+        }
+        else {
+            return res.json({ succes: false });
+        }
+    }
+    catch (error) {
+        return next(error);
+    }
+});
+
+
 router.get('/:id',authenticate, requireExactUser, async (req, res, next)=>{
     const id = req.params.id; 
     if(!id){
@@ -64,25 +87,6 @@ router.delete('/', authenticate, requireExactUser, async (req, res, next) => {
 });
 
 
-router.patch('/', authenticate, requireExactUser, async (req, res, next) => {
-    const id = req.query.token.id;
-    const {puzzleId, level, puzzle } = req.body;
-    if (!id || !puzzleId || !level || !puzzle) {
-        return next(new ExpressError('Missing parameters', 400));
-    }
-    try {
-        let success = await Database.updatePuzzle(id, level, puzzleId, puzzle);
-        if (success) {
-            return res.json({ success: true });
-        }
-        else {
-            return res.json({ succes: false });
-        }
-    }
-    catch (error) {
-        return next(error);
-    }
-});
 
 
 
