@@ -39,7 +39,10 @@ app.use((req, res, next)=>{
     return next();
 });
 
-
+app.use((req, res, next)=>{
+    console.log(req.headers); 
+    return next(); 
+});
 app.use('/saved-puzzles', savedPUzzleRoutes);
 
 
