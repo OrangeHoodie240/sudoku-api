@@ -10,10 +10,8 @@ const path = require('path');
 const app = express(); 
 
 app.use(cors({
-    origin: '*', 
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    preflightContinue: false,
-    optionsSuccessStatus: 204
+    origin: ['https://steven-sudoku-api.herokuapp.com/','*'], 
+    credentials: true
 }));
 
 app.use(express.json())
