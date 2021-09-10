@@ -11,7 +11,9 @@ const app = express();
 
 app.use(cors({
     origin: '*', 
-    methods: 'GET,PUT,PATCH,DELETE,POST'
+    methods: 'GET,PUT,PATCH,DELETE,POST',
+    preflightContinue: false,
+    optionsSuccessStatus: 204
 }));
 
 app.use(express.json())
