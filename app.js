@@ -10,7 +10,7 @@ const path = require('path');
 const app = express(); 
 
 app.use(cors({
-    origin: '*', 
+    origin: ['*', 'localhost:3000'], 
     methods: 'GET,HEAD,PUT,PATCH,OPTIONS,POST,DELETE', 
 }));
 
