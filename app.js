@@ -16,7 +16,8 @@ app.use(cors({
 
 
 app.use((req, res, next)=>{
-    res.setHeader('Access-Control-Allow-Origin', ['http://localhost:3000', '*']); 
+    console.log(req.headers.origign);
+    res.setHeader('Access-Control-Allow-Origin', req.headers.orign); 
     return next();
 });
 
