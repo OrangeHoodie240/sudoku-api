@@ -15,7 +15,7 @@ const app = express();
 //     console.log(referer, 'before cors');
 //     return next(); 
 // });
-app.use(cors({origin: referer}));
+// app.use(cors({origin: referer}));
 
 
 // app.use((req,res,next)=>{
