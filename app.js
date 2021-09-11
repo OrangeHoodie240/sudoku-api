@@ -9,12 +9,17 @@ const path = require('path');
 
 const app = express(); 
 
-app.use(cors());
+const referer = nul; 
+app.use((req, res, next)=>{
+    referer = req.headers.referer; 
+    return next(); 
+});
+app.use(cors({origin: referer}));
 
 
 
 app.use((req, res, next)=>{
-    res.setHeader('Access-Control-Allow-Origin', req.headers.referer)
+    // res.setHeader('Access-Control-Allow-Origin', req.headers.referer)
     return next();
 });
 
