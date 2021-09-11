@@ -16,7 +16,7 @@ app.use(cors({
 
 
 app.use((req, res, next)=>{
-    console.log(req.headers.origign);
+    console.log(req.headers.origin);
     res.setHeader('Access-Control-Allow-Origin', req.headers.orign); 
     return next();
 });
