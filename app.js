@@ -9,11 +9,15 @@ const path = require('path');
 
 const app = express(); 
 
-app.use(cors({
-    origin: '*', 
-    methods: 'GET,HEAD,PUT,PATCH,OPTIONS,POST,DELETE', 
-}));
+app.use(cors());
 
+
+
+app.use((req, res, next)=>{
+    console.log(req.headers.get('origin'));
+
+    return next();
+});
 
 
 app.use(express.json())
