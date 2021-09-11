@@ -9,7 +9,7 @@ const path = require('path');
 
 const app = express(); 
 
-const referer = nul; 
+let referer = null; 
 app.use((req, res, next)=>{
     referer = req.headers.referer; 
     return next(); 
