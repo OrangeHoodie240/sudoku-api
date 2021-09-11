@@ -17,9 +17,8 @@ app.use((req, res, next)=>{
 app.use(cors({origin: referer}));
 
 
-
-app.use((req, res, next)=>{
-    // res.setHeader('Access-Control-Allow-Origin', req.headers.referer)
+app.use((req,res,next)=>{
+    console.log(referer);
     return next();
 });
 
