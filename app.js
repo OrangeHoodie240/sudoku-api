@@ -9,14 +9,12 @@ const path = require('path');
 
 const app = express(); 
 
-app.use(cors({
-    origin: '*'
-}));
+app.use(cors({}));
 
 
 
 app.use((req, res, next)=>{
-    console.log(req.headers.get('origin'));
+    console.log(req.headers);
 
     return next();
 });
