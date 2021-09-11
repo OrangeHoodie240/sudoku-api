@@ -9,19 +9,21 @@ const path = require('path');
 
 const app = express(); 
 
-let referer = null; 
-app.use((req, res, next)=>{
-    referer = req.headers.referer; 
-    console.log(referer, 'before cors');
-    return next(); 
-});
+// let referer = null; 
+// app.use((req, res, next)=>{
+//     referer = req.headers.referer; 
+//     console.log(referer, 'before cors');
+//     return next(); 
+// });
 app.use(cors({origin: referer}));
 
 
-app.use((req,res,next)=>{
-    console.log('here2',referer);
-    return next();
-});
+// app.use((req,res,next)=>{
+//     console.log('here2',referer);
+//     return next();
+// });
+
+app.use(cors({origin: '*'}));
 
 
 app.use(express.json())
