@@ -14,7 +14,7 @@ app.use(cors({}));
 
 
 app.use((req, res, next)=>{
-    console.log('here',req.headers);
+    console.log('here',req.headers.referer);
 
     return next();
 });
