@@ -13,6 +13,8 @@ router.patch('/', authenticate, requireExactUser, async (req, res, next) => {
     if (!id || !puzzleId || !level || !puzzle) {
         return next(new ExpressError('Missing parameters', 400));
     }
+    puzzle = convert2DArrayToFlatString(puzzle);
+
     try {
         let success = await Database.updatePuzzle(id, level, puzzleId, puzzle);
         if (success) {
