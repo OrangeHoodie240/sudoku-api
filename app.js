@@ -12,6 +12,7 @@ const app = express();
 let referer = null; 
 app.use((req, res, next)=>{
     referer = req.headers.referer; 
+    console.log(referer, 'before cors');
     return next(); 
 });
 app.use(cors({origin: referer}));
