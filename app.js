@@ -14,8 +14,7 @@ app.use(cors({}));
 
 
 app.use((req, res, next)=>{
-    console.log('here2',req.headers.referer);
-
+    res.setHeader('Access-Control-Allow-Origin', req.headers.referer)
     return next();
 });
 
