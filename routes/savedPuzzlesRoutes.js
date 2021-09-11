@@ -11,6 +11,7 @@ router.patch('/', authenticate, requireExactUser, async (req, res, next) => {
     const id = req.query.token.id;
     const {puzzleId, level, puzzle } = req.body;
     if (!id || !puzzleId || !level || !puzzle) {
+        console.log(id, puzzleId, puzzle);
         return next(new ExpressError('Missing parameters', 400));
     }
     puzzle = convert2DArrayToFlatString(puzzle);
