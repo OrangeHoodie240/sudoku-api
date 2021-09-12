@@ -245,7 +245,7 @@ class Strategy {
 
 
 
-    
+
     /* NOOOTE TO SELF  I HAVE FOUND AN ERROR WHEN I TRY TO SOLVE FOR ALL POSSIBILITIES AND USE THE 'all' TYPE STRUCTURE */
 
 
@@ -680,8 +680,12 @@ class Strategy {
      * @returns {{board: Board}}
      */
     static _updatePossibleValueRemoval(board, updateAll = false) {
+        if (!board.isCalculated) {
+            board = new Board(Board.toString(board), { calculate: true });
+        } else {
+            board = Board.copy(board);
 
-        board = Board.copy(board);
+        }
         let getStructures = [
             Board.getRow,
             Board.getCol,
@@ -817,8 +821,8 @@ class Strategy {
      * @param {Board} board 
      * @returns {{board: Board, solution: Array<Number, Number, String>}}
      */
-    static _uniqueCandidateRowCol(board){
-        return Strategy._updatePossibleValueRemoval(board);       
+    static _uniqueCandidateRowCol(board) {
+        return Strategy._updatePossibleValueRemoval(board);
     }
 
     /**
@@ -832,7 +836,7 @@ class Strategy {
      */
     static solveForPossibilitiesNakedSubset(board, setSize) {
         if (!board.isCalculated) {
-            board = new Board(Board.toString(board), {calculate: true});
+            board = new Board(Board.toString(board), { calculate: true });
         }
         else {
             board = Board.copy(board);
@@ -841,28 +845,28 @@ class Strategy {
         for (let i = 0; i < cellsLength; i++) {
             let [rowI, colI] = board.blankCellsIndices[i];
             let sets = [];
-            
+
             let results = Strategy._nakedSubset(board, rowI, colI, setSize, 'row', true);
-            if(results) sets.push(results)
+            if (results) sets.push(results)
 
             results = Strategy._nakedSubset(board, rowI, colI, setSize, 'col', true);
-            if(results) sets.push(results)
-            
+            if (results) sets.push(results)
+
             results = Strategy._nakedSubset(board, rowI, colI, setSize, 'box', true);
-            if(results) sets.push(results)
-            
-            if(sets.length === 1){
+            if (results) sets.push(results)
+
+            if (sets.length === 1) {
                 results = sets[0];
             }
-            else if(sets.length === 2){
+            else if (sets.length === 2) {
                 results = SetMethods.intersection(sets[0], sets[1]);
             }
-            else if(sets.length === 3){
+            else if (sets.length === 3) {
                 results = SetMethods.intersection(sets[0], sets[1]);
                 results = SetMethods.intersection(results, sets[2]);
             }
-            
-            if(results){
+
+            if (results) {
                 board.puzzle[rowI][colI]._possibleValues = results;
             }
         }
