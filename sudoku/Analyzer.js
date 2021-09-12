@@ -1,6 +1,19 @@
 const Strategy = require('./Strategy');
+const SetMethods = require('./SetMethods');
 const { Board } = require('./Board');
 
+
+function comparePossibleValues(boardA, boardB) {
+    for (let i = 0; i < 9; i++) {
+        for (let j = 0; j < 9; j++) {
+            let possibilitiesA = boardA.puzzle[i][j].possibleValues;
+            let possibilitiesB = boardB.puzzle[i][j].possibleValues;
+            if (!SetMethods.areEqual(possibilitiesA, possibilitiesB)) {
+                console.log(possibilitiesA, ' at ' + i + ',' + j + ' does not equal ', possibilitiesB);
+            }
+        }
+    }
+}
 
 class Analyzer {
     static _runLastRemainingCell(board) {
@@ -28,6 +41,15 @@ class Analyzer {
         }
         return false;
     }
+
+    static _runUniqueCandidateRowCol(board){
+        let results = Strategy._uniqueCandidateRowCol(board);
+        if(results.solution){
+            return results;
+        }
+        return false;
+    }
+
     static _runHiddenSubset(board, setSize = 2) {
         let results = Strategy._pointingPairsAndTripples(board);
         const rowI = (board.blankCellsIndices[0]) ? board.blankCellsIndices[0][0] : 0;
@@ -157,6 +179,11 @@ class Analyzer {
             case 'unique-candidate':
                 solveWith = ['unique-candidate'];
                 break;
+
+            case 'unique-candidate-row-or-col': 
+                solveWith = ['unique-candidate-row-or-col'] ;
+                break;
+                
             case 'pointing-pairs-and-tripples':
                 solveWith = ['pointing-pairs-and-tripples'];
                 break;
@@ -241,6 +268,11 @@ class Analyzer {
         results = Analyzer._runUniqueCandidate(board);
         if (results) {
             return Analyzer._getAnalysis('unique-candidate', results);
+        }
+
+        results = Analyzer._runUniqueCandidateRowCol(board);
+        if (results) {
+            return Analyzer._getAnalysis('unique-candidate-row-or-col', results);
         }
 
         results = Analyzer._runPointingPairsAndTripples(board);

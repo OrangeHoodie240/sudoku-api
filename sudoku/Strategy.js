@@ -156,7 +156,7 @@ class Strategy {
         }
 
         if (solutions.length === 0) return false;
-        if(!board){
+        if (!board) {
             throw new Error(strat);
         }
         return { board, solutions };
@@ -242,6 +242,13 @@ class Strategy {
         return false;
     }
 
+
+
+
+    
+    /* NOOOTE TO SELF  I HAVE FOUND AN ERROR WHEN I TRY TO SOLVE FOR ALL POSSIBILITIES AND USE THE 'all' TYPE STRUCTURE */
+
+
     /**
      * Attempts to solve for the value of a cell or to decrease the number of possibile values for that cell with the naked subset
      * rule.
@@ -267,6 +274,7 @@ class Strategy {
         else if (solveForPossibilities && targetCell.possibleValues.size <= setSize) {
             return false;
         }
+
 
         let getStructures = null;
         let structureNums = null;
@@ -350,15 +358,15 @@ class Strategy {
      * @param  {Array<Number, String, Boolean>} param3 
      * @returns {{board: Board}}
      */
-    static _hiddenSubset(board, rowI, colI, ...[setSize = 2, structureType = 'row', calculate=false, solveForPossibilities = false]) {
+    static _hiddenSubset(board, rowI, colI, ...[setSize = 2, structureType = 'row', calculate = false, solveForPossibilities = false]) {
         const originalCellCount = board.cellsMissing;
-        if(calculate){
-            board = new Board(Board.toString(board), {calculate: true});
+        if (calculate) {
+            board = new Board(Board.toString(board), { calculate: true });
         }
-        else{
+        else {
             board = Board.copy(board);
         }
-        
+
 
 
         // depending on the structureType, row, col, box or all prepare the correct function calls
@@ -488,7 +496,7 @@ class Strategy {
      * @returns {board: Board, solution: Array<Number, Number, 'String'>}
      */
     static _pointingPairsAndTripples(board, solve = false) {
-        const originalCellCount = board.cellsMissing; 
+        const originalCellCount = board.cellsMissing;
         board = new Board(Board.toString(board), { calculate: true });
 
         // create array of objects for the row and columns we will iterate over 
@@ -558,7 +566,7 @@ class Strategy {
 
         }
 
-        if(solve && board.cellsMissing === originalCellCount){
+        if (solve && board.cellsMissing === originalCellCount) {
             return false;
         }
         return { board };
@@ -573,12 +581,12 @@ class Strategy {
      * @param {Boolean} solve 
      * @returns {{board: Board, solution: [Number, Number, String]}}
      */
-    static _BoxLineReduction(board, solve = true, calculate=false) {
-        const originalCellCount = board.cellsMissing; 
-        if(calculate){
-            board = new Board(Board.toString(board), {calculate: true}); 
+    static _BoxLineReduction(board, solve = true, calculate = false) {
+        const originalCellCount = board.cellsMissing;
+        if (calculate) {
+            board = new Board(Board.toString(board), { calculate: true });
         }
-        else{
+        else {
             board = Board.copy(board);
         }
         const structures = [{ 'get': Board.getRow, 'getBoxes': Board.getBoxRow }, {
@@ -655,7 +663,7 @@ class Strategy {
                 }
             }
         }
-        if(solve && originalCellCount ===  board.cellsMissing){
+        if (solve && originalCellCount === board.cellsMissing) {
             return false;
         }
         return { board };
@@ -756,7 +764,7 @@ class Strategy {
                             const value = Array.from(missingValues)[0];
                             let indices = cell.indices;
                             board = Board.addValue(board, indices[0] + 1, indices[1] + 1, value);
-                            return { board, solution: [indices[0], indices[1], value]};
+                            return { board, solution: [indices[0], indices[1], value] };
                         }
                     }
                 }
@@ -784,21 +792,81 @@ class Strategy {
     static runStrategyUntilNoChange(board, callBack) {
         let originalCellCount = board.cellsMissing;
         let cellsMissing = 82;
-        let solution = null; 
+        let solution = null;
         while (cellsMissing > board.cellsMissing) {
             cellsMissing = board.cellsMissing;
             let results = callBack(board);
             if (results) {
                 board = results.board;
-                solution = results.solution; 
+                solution = results.solution;
             }
         }
         if (originalCellCount === board.cellsMissing) {
             return false;
         }
         else {
-            return { board , solution};
+            return { board, solution };
         }
+    }
+
+
+    /**
+     * Perform unique candidate by row and column, if it has already been performed by box. 
+     * Wrapping _updatePossibleValueRemoval 
+     * 
+     * @param {Board} board 
+     * @returns {{board: Board, solution: Array<Number, Number, String>}}
+     */
+    static _uniqueCandidateRowCol(board){
+        return Strategy._updatePossibleValueRemoval(board);       
+    }
+
+    /**
+     * 
+     * This is a temporary wrapper that will return the board solved for possibilities.
+     * The problem is that applyStrategy is outdated as the design for strategy use has changed 
+     * 
+     * 
+     * @param {Board} board 
+     * @param {Number} setSize 
+     */
+    static solveForPossibilitiesNakedSubset(board, setSize) {
+        if (!board.isCalculated) {
+            board = new Board(Board.toString(board), {calculate: true});
+        }
+        else {
+            board = Board.copy(board);
+        }
+        let cellsLength = board.blankCellsIndices.length;
+        for (let i = 0; i < cellsLength; i++) {
+            let [rowI, colI] = board.blankCellsIndices[i];
+            let sets = [];
+            
+            let results = Strategy._nakedSubset(board, rowI, colI, setSize, 'row', true);
+            if(results) sets.push(results)
+
+            results = Strategy._nakedSubset(board, rowI, colI, setSize, 'col', true);
+            if(results) sets.push(results)
+            
+            results = Strategy._nakedSubset(board, rowI, colI, setSize, 'box', true);
+            if(results) sets.push(results)
+            
+            if(sets.length === 1){
+                results = sets[0];
+            }
+            else if(sets.length === 2){
+                results = SetMethods.intersection(sets[0], sets[1]);
+            }
+            else if(sets.length === 3){
+                results = SetMethods.intersection(sets[0], sets[1]);
+                results = SetMethods.intersection(results, sets[2]);
+            }
+            
+            if(results){
+                board.puzzle[rowI][colI]._possibleValues = results;
+            }
+        }
+        return board;
     }
 }
 
