@@ -17,6 +17,7 @@ router.get('/analysis', async (req, res, next) => {
         puzzle = Board.getBoardFromFlatString(puzzle);
         const analysis = Analyzer.analyze(puzzle);
         if (analysis.success) {
+            console.log(analysis);
             return res.json({ data: analysis });
         }
         else {
