@@ -651,7 +651,9 @@ class Strategy {
                                     cell.possibleValues.delete(el);
                                 }
                             }
-                            if (cell.possibleValues.size === 1) canSolve = true;
+                            if (cell.possibleValues.size === 1) {
+                                canSolve = true;
+                            };
                         }
                     }
 
@@ -667,7 +669,7 @@ class Strategy {
             return false;
         }
         return { board };
-
+    
     }
 
 
@@ -680,12 +682,33 @@ class Strategy {
      * @returns {{board: Board}}
      */
     static _updatePossibleValueRemoval(board, updateAll = false) {
+
+        // copy board and calculate if not already calculated
         if (!board.isCalculated) {
             board = new Board(Board.toString(board), { calculate: true });
         } else {
             board = Board.copy(board);
-
         }
+
+
+        // check if any cells have only one possible value
+        for(let i = 0; i < 9; i++){
+            for(let j = 0; j < 9; j++){
+                if(board.puzzle[i][j].possibleValues.size === 1){
+                    const cell = board.puzzle[i][j]; 
+                    const [rowI, colI] = cell.indices; 
+                    const value = Array.from(cell.possibleValues)[0]; 
+                    const solution = [rowI, colI, value]; 
+                    const newBoard = Board.addValue(board, rowI + 1, colI + 1, value, true);    
+                    if(!updateAll){
+                        return {board: newBoard, solution};
+                    }
+                }
+            }
+        }
+
+        // will iterate the board up to three times, once to analyze it by each possible structure
+        // using these two arrays allows us to reuse the loop body for each.
         let getStructures = [
             Board.getRow,
             Board.getCol,
@@ -698,10 +721,19 @@ class Strategy {
             Board.getMissingBoxValues
         ];
 
+        // outer loop iterates over analyzing by each structure (row, col, box)
         for (let i = 0; i < 3; i++) {
+            // inner loop iterates over each instance of the structure (9 rows, 9 columns, 9 boxes)
             for (let j = 1; j < 10; j++) {
+
+                // get structure (box row or col) and get the values missing from that structure
                 const structure = getStructures[i](board, j);
                 const missingValues = getMissingValues[i](board, j);
+
+                // outer loop iterates each missing value from the structure
+                // inner loop iterates each cell in the structure for each missing value
+                // We are building an object that associates a missing value to a list of cells
+                // in the structure that have that missing value within their possibleValue sets
                 let possibleValueDirectory = {};
                 for (let missingValue of missingValues) {
                     for (let cell of structure) {
@@ -720,14 +752,18 @@ class Strategy {
                     }
                 }
 
+                // we filter the results of the above to only include those missing value entries that 
+                // had only one cell capable of holding them
                 possibleValueDirectory = Object.values(possibleValueDirectory)
                     .filter(entry => entry.cells.length === 1);
 
+                // iterate each cell to the value of the missing value
                 for (let entry of possibleValueDirectory) {
                     let cell = entry.cells[0];
                     let [rowI, colI] = cell.indices;
                     let value = entry.missingValue;
 
+                    // if we are not updating them all, return on the first solved cell
                     if (!updateAll) {
                         let solution = [rowI, colI, value];
                         return { board: Board.addValue(board, rowI + 1, colI + 1, value, true), solution };
@@ -735,6 +771,8 @@ class Strategy {
                 }
             }
         }
+
+        // if updateAll is true
         return { board };
     }
 
