@@ -1,4 +1,11 @@
-API from this application 
+## The Website
+     https://steven-sudoku-api.herokuapp.com
+
+
+
+
+
+## API 
 
 Base URL: https://steven-sudoku-api.herokuapp.com/sudoku
 
