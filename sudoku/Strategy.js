@@ -51,7 +51,8 @@ class Strategy {
 
 
     /**
-     *  
+     *Use only with sole-candidate, unique-candidate and naked-subset (but naked-subset only when solving). 
+     * 
     * - Solves using the specified strategy. 
     * 
     * - Strategy argument is lower-skewer case string
@@ -59,7 +60,6 @@ class Strategy {
     * - Available strategy argments: 
     *   1. 'sole-candidate'
     *   2. 'unique-candidate'  
-    *   3. 'naked-subset' 
     * 
     * - By default finds the first blank cell and moves left to right up to down until it solves a single cell. 
     *      
@@ -173,7 +173,7 @@ class Strategy {
      * @param {Board} board 
      * @param {Number} rowI 
      * @param {Number} colI 
-     * @param {String} particularNumber 
+     * @param {String} particularNumber
      */
     static _uniqueCandidate(board, rowI, colI, ...possibilities) {
         const row = Board.convertCellsToCharacters(Board.getRow(board, rowI + 1)).split(',');
@@ -246,7 +246,6 @@ class Strategy {
 
 
 
-    /* NOOOTE TO SELF  I HAVE FOUND AN ERROR WHEN I TRY TO SOLVE FOR ALL POSSIBILITIES AND USE THE 'all' TYPE STRUCTURE */
 
 
     /**
@@ -352,11 +351,24 @@ class Strategy {
     /**
      * Solves using hidden subset
      * setSize will stand for hidden subset within the larger set.
+     * What it returns depends on 
+     *                  1. the solveForPossibilities parameter
+     *                  2. its success. 
+     * 
+     * If solvedForPossibilities is false (which it is by default), it will 
+     * attempt to solve and if succesfful {board, solution} will be returned 
+     * where board is the new board with the value added and solution an array 
+     * letting us know what it solved for [rowI, colI, 'value']. If we are unable
+     * to solve it will return false
+     *
+     * if solvedForPossibilities is true it will attempt to widdle down the sets 
+     * of possible values for every cell a single time and return the resulting board.
+     * 
      * @param {Board} board 
      * @param {Number} rowI 
      * @param {Number} colI 
      * @param  {Array<Number, String, Boolean>} param3 
-     * @returns {{board: Board}}
+     * @returns {{board: Board, solution: Array<Number, Number, String>}}
      */
     static _hiddenSubset(board, rowI, colI, ...[setSize = 2, structureType = 'row', calculate = false, solveForPossibilities = false]) {
         const originalCellCount = board.cellsMissing;
