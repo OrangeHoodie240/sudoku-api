@@ -1,6 +1,20 @@
-## The Website
-     https://steven-sudoku-api.herokuapp.com
+## Repos
+    In addition to this repository, the site was built using two other repositories. 
+    The repo with the code I used to generate the puzzles: https://github.com/OrangeHoodie240/Sudoku
+    The repo I used to build the React app: https://github.com/OrangeHoodie240/sudoku-react
 
+
+
+## The Website
+
+The title of the site is Play Sudoku: https://steven-sudoku-api.herokuapp.com
+
+The website allows users to play sudoku of three different levels of difficulty. Users are able to create an 
+account and save puzzles to continue playing later. The website has a sudoku analyzer that, when the hint button is 
+selected, will highlight an empty cell and specify the strategy (or strategies if it requires more than one rule) to solve. 
+The analyzer always selects an empty cell for which the most simple rule possible is needed to solve. The solution is available
+by clicking another button. A tutorial is provided explaining both the basic rules of sudoku as well as the strategies referenced
+by the analyzer. 
 
 
 

@@ -6,6 +6,8 @@ const Database = require('./Database');
 const getPuzzle = require('./helpers/getPuzzle');
 const convert2DArrayToFlatString = require('./helpers/convert2DArrayToFlatString');
 const jsonwebtoken = require('jsonwebtoken');
+const { Board } = require('./sudoku/Board');
+
 
 afterAll(async () => {
     await dbConnection.end();
@@ -58,7 +60,6 @@ describe('test savedPuzzleRoutes', () => {
         const level = 'three';
         let resp = await request(app).get('/sudoku?level=' + level);
         let { puzzle, puzzleId } = resp.body.data;
-        puzzle = convert2DArrayToFlatString(puzzle);
 
         resp = await request(app).post('/saved-puzzles')
             .send({
@@ -72,19 +73,24 @@ describe('test savedPuzzleRoutes', () => {
         let puzzleRow = await dbConnection.query(`SELECT puzzle FROM sudoku_incomplete_puzzles 
                                                         WHERE user_id=$1 AND puzzle_id=$2 AND level=$3`,
             [testUserAuthentication.id, puzzleId, level]);
-        puzzleRow = puzzleRow.rows[0];
 
-        expect(puzzleRow.puzzle)
+            puzzleRow = puzzleRow.rows[0];
+ 
+        puzzle = convert2DArrayToFlatString(puzzle);
+            expect(puzzleRow.puzzle)
             .toEqual(puzzle);
-
+        
 
         // test update puzzle route
+
 
         puzzle = puzzle.split(',');
         let firstBlankIndex = puzzle.findIndex(b => b === '0');
         puzzle[firstBlankIndex] = '3';
         puzzle = puzzle.join(',');
 
+        puzzle = Board.serialize(Board.getBoardFromFlatString(puzzle)); 
+        
         resp = await request(app).patch('/saved-puzzles').send({
             token: testUserAuthentication.token,
             puzzle,
@@ -102,7 +108,7 @@ describe('test savedPuzzleRoutes', () => {
         puzzleRow = puzzleRow.rows[0];
 
         expect(puzzleRow.puzzle)
-            .toEqual(puzzle);
+            .toEqual(convert2DArrayToFlatString(puzzle));
 
         // test puzzle delete
 
