@@ -1,8 +1,13 @@
-## Repos
-    In addition to this repository, the site was built using two other repositories. 
-    The repo with the code I used to generate the puzzles: https://github.com/OrangeHoodie240/Sudoku
-    The repo I used to build the React app: https://github.com/OrangeHoodie240/sudoku-react
+## Technology Stack
+This application was made with Nodejs, Express, Postgresql and React
 
+## Repos
+In addition to this repository, the site was built using two other repositories. 
+    * The repo with the code I used to generate the puzzles: https://github.com/OrangeHoodie240/Sudoku
+    * The repo I used to build the React app: https://github.com/OrangeHoodie240/sudoku-react
+    
+## Tests 
+Both this and https://github.com/OrangeHoodie240/Sudoku have tests that can be run with jest. 
 
 
 ## The Website
